@@ -9,6 +9,12 @@ image:
   tag: stable
   pullPolicy: IfNotPresent
 
+fluentbit:
+  repository: fluent/fluent-bit
+  tag: 1.3
+  pullPolicy: IfNotPresent
+ 
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
