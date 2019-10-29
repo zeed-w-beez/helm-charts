@@ -3,3 +3,16 @@ appVersion: "1.0"
 description: A Helm chart for Kubernetes
 name: default
 version: 0.1.0
+keywords:
+  - helm charts
+  - fluent-bit
+maintainers:
+  - name: zeed-w-beez
+    email: zeed.w.zhao@newegg.com
+    url: https://github.com/zeed-w-beez
+sources:
+  - https://github.com/zeed-w-beez/helm-charts/tree/master/default
+home: https://github.com/zeed-w-beez/helm-charts
+engine: gotpl
+tillerVersion: 2.14.2
+deprecated: false
