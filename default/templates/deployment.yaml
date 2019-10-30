@@ -41,7 +41,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: log-volume
-              mountPath: /app/logs/
+              mountPath: /app/log/
         - name: {{ .Chart.Name }}-fluentbit
           image: "{{ .Values.fluentbit.repository }}:{{ .Values.fluentbit.tag }}"
           imagePullPolicy: {{ .Values.fluentbit.pullPolicy }}
@@ -51,22 +51,9 @@ spec:
               protocol: TCP
           volumeMounts:
             - name: config-volume
-              mountPath: /etc/fluent-bit/fluent-bit.conf
-              subPath: fluent-bit.conf
-            - name: config-volume
-              mountPath: /etc/fluent-bit/input-kubernetes.conf
-              subPath: input-kubernetes.conf
-            - name: config-volume
-              mountPath: /etc/fluent-bit/filter-kubernetes.conf
-              subPath: filter-kubernetes.conf
-            - name: config-volume
-              mountPath: /etc/fluent-bit/output-elasticsearch.conf
-              subPath: output-elasticsearch.conf
-            - name: config-volume
-              mountPath: /etc/fluent-bit/parsers.conf
-              subPath: parsers.conf
+              mountPath: /fluent-bit/etc/
             - name: log-volume
-              mountPath: /opt/app/logs/
+              mountPath: /app/log/
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

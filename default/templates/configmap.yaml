@@ -6,12 +6,11 @@ metadata:
   labels:
 {{ include "default.labels" . | indent 4 }}
 data:
-  commithash: undefind
   # Configuration files: server, input, filters and output
   # ======================================================
   fluent-bit.conf: |
     [SERVICE]
-        Flush         1
+        Flush         5
         Log_Level     info
         Daemon        off
         Parsers_File  parsers.conf
@@ -19,43 +18,34 @@ data:
         HTTP_Listen   0.0.0.0
         HTTP_Port     2020
 
-    @INCLUDE input-kubernetes.conf
-    @INCLUDE filter-kubernetes.conf
-    @INCLUDE output-elasticsearch.conf
-
-  input-kubernetes.conf: |
     [INPUT]
-        Name              tail
-        Tag               kube.*
-        Path              /var/log/containers/*.log
-        Parser            docker
-        DB                /var/log/flb_kube.db
-        Mem_Buf_Limit     5MB
-        Skip_Long_Lines   On
-        Refresh_Interval  10
+        Name dummy
+        Tag  dummy.log
 
-  filter-kubernetes.conf: |
-    [FILTER]
-        Name                kubernetes
-        Match               kube.*
-        Kube_URL            https://kubernetes.default.svc:443
-        Kube_CA_File        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-        Kube_Token_File     /var/run/secrets/kubernetes.io/serviceaccount/token
-        Kube_Tag_Prefix     kube.var.log.containers.
-        Merge_Log           On
-        Merge_Log_Key       log_processed
-        K8S-Logging.Parser  On
-        K8S-Logging.Exclude Off
+    [INPUT]
+        Name tail
+        Tag  nginx.access
+        Parser nginx
+        Path /app/log/nginx-access.log
 
-  output-elasticsearch.conf: |
+    [INPUT]
+        Name tail
+        Tag  nginx.error
+        Parser nginx
+        Path /app/log/nginx-error.log
+
     [OUTPUT]
-        Name            es
-        Match           *
-        Host            ${FLUENT_ELASTICSEARCH_HOST}
-        Port            ${FLUENT_ELASTICSEARCH_PORT}
-        Logstash_Format On
-        Replace_Dots    On
-        Retry_Limit     False
+        Name  stdout
+        Match *
+
+    [OUTPUT]
+        Name  es
+        Match es.nginx.*
+        Host  192.168.2.3
+        Port  9200
+        Index my_index
+        Type  my_type
+
 
   parsers.conf: |
     [PARSER]
